@@ -37,9 +37,17 @@ void moveControl_task(void *p_arg)
 	OS_ERR err;
 	CPU_TS ts;  //ts = OSTimeGet(&err);
 	MoveMode_Type  myMoveType;  //运动模式
+	SysState_Type  mySysState;  //系统状态
 	static MoveMode_Type myLastState = MODE_MANUAL;  //记录上一次循环时的工作模式
 	while(1)
 	{
+		GetSysState(&mySysState);
+		if(mySysState != MODE_MOVE)    //如果系统不处于正常工作状态
+		{
+			MoterMoveStop();  //停止运动
+			continue;
+		}
+		
 		GetMoveMode(&myMoveType);
 		if(myMoveType == MODE_MANUAL)  	//手动模式
 		{

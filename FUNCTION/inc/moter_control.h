@@ -10,6 +10,7 @@ void pitchControlFuc(MoveMode_Type myLastState);
 void deepControlFuc(MoveMode_Type myLastState);
 void dirControlFuc(MoveMode_Type myLastState);
 void allControlFuc(MoveMode_Type myLastState);
+void MoterMoveStop(void);
 
 void MoterPWMoutput(s16 p1, s16 p2, s16 p3);
 

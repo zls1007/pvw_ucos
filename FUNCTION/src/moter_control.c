@@ -171,7 +171,13 @@ void allControlFuc(MoveMode_Type myLastState)
 
 }
 
-//电机pwm输出
+//系统停止动力输出模式
+void MoterMoveStop(void)
+{
+	MoterPWMoutput(0, 0, 0);
+}
+
+//电机pwm输出  +-500
 void MoterPWMoutput(s16 p1, s16 p2, s16 p3)
 {
 		s16 c1, c2, c3;  //无刷电机占空比 1000 ~ 2000
@@ -181,8 +187,11 @@ void MoterPWMoutput(s16 p1, s16 p2, s16 p3)
 		//if(abs(p1) < 60) p1 = 0;
 		//if(abs(p2) < 30) p2 = 0;
 	  //if(abs(p3) < 50) p3 = 0;
+	
+		//低通滤波
 	  cur_c3 = 0.05*p3 + 0.95*cur_c3;
 		p3 = (s16)cur_c3;
+	  //设置死区
 		if(abs(p3) < 40) p3 = 0;
 		
 		//占空比映射
