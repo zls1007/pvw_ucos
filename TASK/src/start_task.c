@@ -61,7 +61,7 @@ void start_task(void *p_arg)
 	usartDeal_task_create();
 	
 	//创建IO板通信任务  6
-	usartIO_task_create();
+	//usartIO_task_create();
 	
 	//创建imu接收任务  7
 	imuData_task_create();	
