@@ -6,7 +6,13 @@
 
 
 //存储命令返回数组
-u8 feedback_buf[100];
+static u8 feedback_buf[100];
+
+//存储当前LED命令的状态
+static LedCmd_TypeDef mLedCmd;
+
+//存储当前运动命令的状态
+MoveCmd_TypeDef mMoveCmd;
 
 //把字符串解析到数组
 void CmdAnalysis(Cmd_TypeDef *cmd, CPU_INT08U* p, CPU_INT08U size)
@@ -63,6 +69,39 @@ void CmdAnalysis(Cmd_TypeDef *cmd, CPU_INT08U* p, CPU_INT08U size)
 		cmd -> data[i] = data[i];
 	}	
 }
+
+
+//定时器任务（1s周期）
+void tmr1_callback(void)
+{
+	 //对灯光控制的监视
+	if(mLedCmd.cnt == 0)   //该控制用户不再发送控制命令
+	{
+		mLedCmd.id = -1;  //重新回到无接收状态，灯光保持上一时刻的亮度
+	}
+	else
+	{
+		mLedCmd.cnt = 0;  //定时清零
+	}
+	//对运动控制的监视
+	if(mMoveCmd.cnt == 0)  //该用户不在发送控制命令
+	{
+		mMoveCmd.id = -1;
+		mMoveCmd.ismove = 0;
+		mMoveCmd.x = 0;
+		mMoveCmd.r = 0;
+		mMoveCmd.z = 0;
+		//更新系统参数
+		SetMoveSpeed(&mMoveCmd.x,&mMoveCmd.r,&mMoveCmd.z);
+	}
+	else
+	{
+		mMoveCmd.cnt = 0;
+	}
+	
+}
+
+//
 
 //对控制命令进行处理
 void CmdRouter(Cmd_TypeDef *cmd)
@@ -143,14 +182,75 @@ void GetStateFuc(Cmd_TypeDef *cmd)
 void MoterVolFuc(Cmd_TypeDef *cmd)
 {
 		s16 x, r, z;
+		u8 ismove;  //是否运动
 	
 		//获取数据
 		x = cmd -> data[0];
 		r = cmd -> data[1];
 		z = cmd -> data[2];
+	  if(x == 0 && r == 0 && z == 0)
+			ismove = 0;
+		else
+			ismove = 1;
+		
+		//解决运动冲突
+		if(ismove) //该用户发送命令使机器人运动
+		{
+			if(mMoveCmd.id == -1) //此时没有任何指令
+			{
+				//不做任何响应
+			}
+			else if(mMoveCmd.ismove == 0)  //处于静止
+			{
+				mMoveCmd.id = cmd ->prio;   //切换到该用户
+				mMoveCmd.ismove = ismove;
+				mMoveCmd.cnt = 0;
+				mMoveCmd.x = x;
+				mMoveCmd.r = r;
+				mMoveCmd.z = z;
+			}
+			else if(mMoveCmd.id == cmd->prio)  //该命令来自于同一用户
+			{
+				mMoveCmd.ismove = ismove;		//跟随该用户的运动输入而改变
+				mMoveCmd.cnt ++;						//计数加1
+				mMoveCmd.x = x;
+				mMoveCmd.r = r;
+				mMoveCmd.z = z;	
+			}
+			else if(mMoveCmd.id > cmd->prio)   //高优先级用户发送运动命令
+			{
+				mMoveCmd.id = cmd ->prio;   //切换到该用户
+				mMoveCmd.ismove = ismove;
+				mMoveCmd.cnt = 0;
+				mMoveCmd.x = x;
+				mMoveCmd.r = r;
+				mMoveCmd.z = z;
+			}
+		}
+		else   //用户发送命令使机器人静止
+		{
+			if(mMoveCmd.id == -1) //此时没有任何指令
+			{
+				mMoveCmd.id = cmd ->prio;   //直接响应该用户
+				mMoveCmd.cnt = 0;
+				mMoveCmd.ismove = ismove;
+				mMoveCmd.x = x;
+				mMoveCmd.r = r;
+				mMoveCmd.z = z;
+			}
+			else if(mMoveCmd.id == cmd->prio)  //来自同一用户
+			{
+				mMoveCmd.cnt ++;
+				mMoveCmd.ismove = ismove;
+				mMoveCmd.x = x;
+				mMoveCmd.r = r;
+				mMoveCmd.z = z;
+			}
+
+		}
 	
 		//更新系统参数
-		SetMoveSpeed(&x,&r,&z);
+		SetMoveSpeed(&mMoveCmd.x,&mMoveCmd.r,&mMoveCmd.z);
 	
 		//输出调试信息
 		printf("moter move!\r\n");
@@ -161,12 +261,34 @@ void MoterVolFuc(Cmd_TypeDef *cmd)
 //控制LED亮度
 void CmdLedFuc(Cmd_TypeDef *cmd)
 {
-//	//给综合板发指令
-//	IOMsgSend(cmd -> data[0], cmd -> data[1]);
+  
 	s16 d1, d2;
 	d1 = cmd -> data[0];
 	d2 = cmd -> data[1];
-	SetLedLight(&d1, &d2);
+	
+	//解决led冲突
+	if(mLedCmd.id == -1) //之前没有接收到led指令
+	{
+		mLedCmd.id = cmd -> prio;
+		mLedCmd.cnt = 0;
+		mLedCmd.light = d1;
+	}
+	else if(mLedCmd.id == cmd -> prio)  //该指令用户与当前led状态来自同一用户
+	{
+		mLedCmd.cnt ++; //计数累加
+		mLedCmd.light = d1;  //跟随该用户的变化
+	}
+	else if(mLedCmd.id != cmd ->prio)   //其他用户也发送led控制指令
+	{
+		if(d1 > mLedCmd.light)  //该用户发送的比上一个用户的大
+		{
+			mLedCmd.id = cmd -> prio;   //开始响应该用户的输入
+			mLedCmd.cnt = 0;
+			mLedCmd.light = d1;
+		}
+	}
+	
+	SetLedLight(&mLedCmd.light, &mLedCmd.light);
 	
 	//调试信息
 	printf("led:d1=%d, d2=%d\r\n", d1, d2);

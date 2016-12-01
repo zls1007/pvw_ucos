@@ -3,6 +3,8 @@
 #include "cmd_deal.h"
 //任务控制块
 OS_TCB UsartDealTaskTCB;
+//定时器
+OS_TMR MyTmr1;
 //任务堆栈	
 CPU_STK USART_DEAL_TASK_STK[USART_DEAL_STK_SIZE];
 
@@ -31,6 +33,15 @@ void usartDeal_task_create(void)
 							(OS_MEM_QTY) 8,
 							(OS_MEM_SIZE) 80,
 							(OS_ERR* )&err);
+	//创建定时器
+	OSTmrCreate((OS_TMR *)&MyTmr1,
+							(CPU_CHAR *)"tmr1",
+							(OS_TICK)20,
+							(OS_TICK)100,
+							(OS_OPT)OS_OPT_TMR_PERIODIC,
+							(OS_TMR_CALLBACK_PTR) tmr1_callback,
+							(void *) 0,
+							(OS_ERR *)&err);
 	
 	//创建任务
 	OSTaskCreate((OS_TCB 	* )&UsartDealTaskTCB,		
@@ -63,6 +74,10 @@ void usartDeal_task(void *p_arg)
 	p_arg = p_arg;
 	
 	//usart_cmd_init(115200);			//初始化通信接口
+	
+	//启动定时器
+	OSTmrStart((OS_TMR *)&MyTmr1, 
+						 (OS_ERR *)&err);
 	
 	while(1)
 	{

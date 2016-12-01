@@ -27,6 +27,26 @@
 #define ID_TYPE_RESUME_BACKUP		31			//恢复出厂设置
 #define ID_TYPE_UPDATE_APP			32			//更新程序
 
+//当前led命令状态
+typedef struct led_cmd_t
+{
+	s16 id;  					//当前照明亮度所对应的id  -1表示没有用户发送led控制指令
+	s16 cnt;					//1s接收到该id命令的次数
+	s16 light;				//此时的亮度值
+} LedCmd_TypeDef;
+
+//当前运动命令状态
+typedef struct move_cmd_t
+{
+	s16 id;						//当前响应的运动用户id  -1表示没有用户发送运动命令
+	u8 ismove;				//当前机器人是否处于运动状态 0-静止  1-运动
+	s16 cnt;					//1s接收到来自该id命令的次数
+	s16 x, r, z;			//此时运动的指令
+} MoveCmd_TypeDef;
+
+//定时器任务（1s）
+void tmr1_callback(void);
+
 
 //把字符串解析到结构体
 void CmdAnalysis(Cmd_TypeDef *cmd, CPU_INT08U* p, CPU_INT08U size);
