@@ -1,4 +1,5 @@
 #include "task.h"
+#include "led_deal.h"
 
 //任务控制块
 OS_TCB LedTaskTCB;
@@ -34,10 +35,7 @@ void led_task(void *p_arg)
 	p_arg = p_arg;
 	while(1)
 	{
-		printf("11\r\n");
-		GPIO_ResetBits(GPIOB,GPIO_Pin_1);;    //LED0打开
-		OSTimeDlyHMSM(0,0,0,500,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
-		GPIO_SetBits(GPIOB,GPIO_Pin_1);;    	//LED0关闭
-		OSTimeDlyHMSM(0,0,0,500,OS_OPT_TIME_HMSM_STRICT,&err); //延时500ms
+		LedLightCtr();  //改变灯光亮度
+		OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //延时100ms
 	}
 }

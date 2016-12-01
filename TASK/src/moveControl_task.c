@@ -66,7 +66,7 @@ void moveControl_task(void *p_arg)
 			allControlFuc(myLastState);
 			myLastState = MODE_BOTH;
 		}
-		OSTimeDlyHMSM(0,0,0,10,OS_OPT_TIME_HMSM_STRICT,&err); //—” ±100ms
+		OSTimeDlyHMSM(0,0,0,10,OS_OPT_TIME_HMSM_STRICT,&err); //—” ±10ms
 	}
 }
 

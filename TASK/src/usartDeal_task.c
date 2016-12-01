@@ -52,6 +52,7 @@ void usartDeal_task_create(void)
 void usartDeal_task(void *p_arg)
 {
 	OS_ERR err;
+	SysState_Type mState;
 
 	CPU_INT08U *delta;   	//存储块的指针
 	OS_MSG_SIZE size;			//存储块的长度
@@ -66,9 +67,27 @@ void usartDeal_task(void *p_arg)
 	while(1)
 	{
 		//等待任务消息
-		delta = (CPU_INT08U* )OSTaskQPend(0, OS_OPT_PEND_BLOCKING, &size, 0, &err);
+		delta = (CPU_INT08U* )OSTaskQPend(1000, OS_OPT_PEND_BLOCKING, &size, 0, &err);  //等待一秒钟
 		//OSTaskSemPend(0, OS_OPT_PEND_BLOCKING, 0, &err);    //等待任务信号量
-
+		
+		if(err == OS_ERR_TIMEOUT)  //等待超时，说明通信中断
+		{
+			GetSysState(&mState);
+			if(mState == MODE_MOVE) 
+			{
+				mState = MODE_ERR_COM;   
+				SetSysState(&mState);			//系统通信中断
+			}
+			continue;
+		}
+		
+		GetSysState(&mState);
+		if(mState == MODE_ERR_COM)  //如果此时系统处于通信中断状态，则系统恢复
+		{
+				mState = MODE_ERR_COM;   
+				SetSysState(&mState);			//系统恢复正常运动模式
+		}
+		
 		CmdAnalysis(&myCmd, delta, size);
 		CmdRouter(&myCmd);
 		

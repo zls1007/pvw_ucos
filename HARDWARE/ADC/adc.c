@@ -131,7 +131,7 @@ void DMA2_Stream0_IRQHandler(void)
 		if(err == OS_ERR_NONE)
 		{
 			//复制数据	
-			memcpy(MyADCBlkPtr, ADC_ConvertedValue, N*2*2);
+			memcpy(MyADCBlkPtr, (const void *)ADC_ConvertedValue, N*2*2);
 			//发送消息队列
 			OSTaskQPost((OS_TCB* )&adcDealTaskTCB,
 				(void *)MyADCBlkPtr,

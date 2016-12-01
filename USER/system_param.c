@@ -10,7 +10,7 @@ static UserCmd_TypeDef mUserCmd;		//用户命令输入
 /*  系统参数初始化  */
 void system_param_init(void)
 {
-	mSysState = MODE_RESET;   //系统上电复位
+	mSysState = MODE_MOVE;   //系统处于正常运动模式
 	
 	mMoveMode = MODE_MANUAL;  //手动运动模式
 	

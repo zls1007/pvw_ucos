@@ -71,6 +71,9 @@ void start_task(void *p_arg)
 	
 	//创建推进器控制程序 9
 	moveControl_task_create();
+	
+	//创建ADC处理任务 10
+	adcDeal_task_create();
 						 
 	OS_TaskSuspend((OS_TCB*)&StartTaskTCB,&err);		//挂起开始任务			 
 }
