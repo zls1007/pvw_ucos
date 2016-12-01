@@ -2,12 +2,27 @@
 
 static SysState_Type mSysState;   	//系统运行状态
 static MoveMode_Type mMoveMode;	 		//系统运动模式
-
 static UserCmd_TypeDef mUserCmd;		//用户命令输入
 
 /****************************************************************************************
 											操作函数
 *****************************************************************************************/
+/*  系统参数初始化  */
+void system_param_init(void)
+{
+	mSysState = MODE_RESET;   //系统上电复位
+	
+	mMoveMode = MODE_MANUAL;  //手动运动模式
+	
+	mUserCmd.usercmd_move_x = 0;  //初始状态：静止
+	mUserCmd.usercmd_move_r = 0;
+	mUserCmd.usercmd_move_z = 0;
+	
+	mUserCmd.usercmd_led_1 = 20;		//初始状态：微亮
+	mUserCmd.usercmd_led_2 = 20;
+}
+
+
 
 /*  查询/更新系统运行状态  */
 void SetSysState(SysState_Type *state)

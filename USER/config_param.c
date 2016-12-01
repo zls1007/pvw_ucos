@@ -6,6 +6,26 @@ static ConfigParam_TypeDef mConfigParam;    //系统配置参数
 /****************************************************************************************
 											操作函数
 *****************************************************************************************/
+/*  系统配置参数初始化*/
+void config_param_init(void)
+{
+	//俯仰闭环PID参数
+	mConfigParam.param_pitch_p = 20.0;
+	mConfigParam.param_pitch_i = 0.0;
+	mConfigParam.param_pitch_d = 0.0;
+	
+	//深度闭环PID参数
+	mConfigParam.param_deep_p = 20.0;
+	mConfigParam.param_deep_i = 0.0;
+	mConfigParam.param_deep_d = 0.0;
+	
+	//偏航角闭环PID参数
+	mConfigParam.param_deep_p = 10.0;
+	mConfigParam.param_deep_i = 0.0;
+	mConfigParam.param_deep_d = 0.0;
+}
+
+
 
 /*  查询/更新俯仰PID参数 */
 void SetPitchPID(float *kp, float *ki, float *kd)

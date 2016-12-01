@@ -77,6 +77,9 @@ typedef enum com_err
 											操作函数
 *****************************************************************************************/
 
+/*  系统参数初始化  */
+void system_param_init(void);
+
 /*  查询/更新系统运行状态  */
 void SetSysState(SysState_Type *state);
 void GetSysState(SysState_Type *state);

@@ -49,6 +49,9 @@ typedef struct config_param
 											操作函数
 *****************************************************************************************/
 
+/*  系统配置参数初始化*/
+void config_param_init(void);
+
 /*  查询/更新俯仰PID参数 */
 void SetPitchPID(float *kp, float *ki, float *kd);
 void GetPitchPID(float *kp, float *ki, float *kd);
