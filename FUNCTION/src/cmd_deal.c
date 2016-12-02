@@ -416,7 +416,7 @@ void UpdateAppFuc(Cmd_TypeDef *cmd)
 void CmdFeedbackNoData(Cmd_TypeDef *cmd, ComErr_Type err)
 {
 	sprintf((char *)feedback_buf, "{\"T\":%d,\"P\":0,\"L\":1,\"D\":[%d]}\r\n", cmd->type+50, err);
-	os_print_str(USART2, (char *)feedback_buf);
+	os_print_str(USART1, (char *)feedback_buf);
 }
 void CmdFeedbackRunState(void)
 {
@@ -429,7 +429,7 @@ void CmdFeedbackRunState(void)
 
 	sprintf((char *)feedback_buf, "{\"T\":51,\"P\":0,\"L\":7,\"D\":[%d,%d,%d,%d,%d,%d,%d]}\r\n", (int)(vol*100),(int)(cur*100),(int)(deep*100),(int)(r*100),(int)(p*100),(int)(y*100),(int)(press));
 	//sprintf((char *)feedback_buf, "{\"T\":51,\"P\":0,\"L\":7,\"D\":[%d,%d,%d,%d]}\r\n",r,p,y,press);
-	os_print_str(USART2, (char *)feedback_buf);
+	os_print_str(USART1, (char *)feedback_buf);
 }
 void CmdFeedbackPIDParam(void)
 {

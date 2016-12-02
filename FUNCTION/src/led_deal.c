@@ -15,6 +15,19 @@ void LedLightCtr(void)
 	GetSysState(&mState);
 	GetLedLight(&d1, &d2);
 	
+//	if(mState == MODE_MOVE)
+//	{
+//		printf("move mode\r\n");
+//	}
+//	else if(mState == MODE_ERR_COM)
+//	{
+//		printf("com err\r\n");
+//	}
+//	else if(mState == MODE_ALARM_VOL)
+//	{
+//		printf("vol err\r\n");
+//	}
+	
   if(mState == MODE_MOVE)	 //正常运动模式
 	{
 		if(lastState != mState) //首次检测到正常模式
@@ -30,7 +43,7 @@ void LedLightCtr(void)
 			 lastState = mState;
 			 cnt = 0;
 			 ln = 10;  			//亮10s
-			 perio = 30;		//周期30s
+			 perio = 20;		//周期30s
 		}
 		else
 		{

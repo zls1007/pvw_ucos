@@ -63,8 +63,7 @@ void start_task(void *p_arg)
 	//创建IO板通信任务  6
 	//usartIO_task_create();
 	
-	//创建imu接收任务  7
-	imuData_task_create();	
+
 	
 	//创建气压计采集任务  8
 	pressureData_task_create();
@@ -74,6 +73,9 @@ void start_task(void *p_arg)
 	
 	//创建ADC处理任务 10
 	adcDeal_task_create();
+	
+		//创建imu接收任务  7
+	imuData_task_create();	
 						 
 	OS_TaskSuspend((OS_TCB*)&StartTaskTCB,&err);		//挂起开始任务			 
 }

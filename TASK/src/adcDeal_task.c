@@ -87,6 +87,7 @@ void filter(uint16_t ADC_ConvertedValue[][2])
 	//更新传感器参数
 	SetDeepData(&deep);
 	GetBatteryData(&vol, &cur);
+	printf("vol=%.2f, deep=%.2f\r\n", vol, deep);
 	
 	//检测是否欠压
 	if(vol < 10.7)

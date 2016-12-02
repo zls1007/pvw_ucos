@@ -125,20 +125,20 @@ void DMA2_Stream0_IRQHandler(void)
 	if(DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0) != RESET)
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
-		
-		//获取存储块
-		MyADCBlkPtr = (CPU_INT08U* )OSMemGet(&MyADCPartition, &err);
-		if(err == OS_ERR_NONE)
-		{
-			//复制数据	
-			memcpy(MyADCBlkPtr, (const void *)ADC_ConvertedValue, N*2*2);
-			//发送消息队列
-			OSTaskQPost((OS_TCB* )&adcDealTaskTCB,
-				(void *)MyADCBlkPtr,
-				(OS_MSG_SIZE)N*2*2,
-				(OS_OPT)OS_OPT_POST_FIFO,
-				(OS_ERR* )&err);
-		}
+		printf("ad\r\n");
+//		//获取存储块
+//		MyADCBlkPtr = (CPU_INT08U* )OSMemGet(&MyADCPartition, &err);
+//		if(err == OS_ERR_NONE)
+//		{
+//			//复制数据	
+//			memcpy(MyADCBlkPtr, (const void *)ADC_ConvertedValue, N*2*2);
+//			//发送消息队列
+//			OSTaskQPost((OS_TCB* )&adcDealTaskTCB,
+//				(void *)MyADCBlkPtr,
+//				(OS_MSG_SIZE)N*2*2,
+//				(OS_OPT)OS_OPT_POST_FIFO,
+//				(OS_ERR* )&err);
+//		}
 	}
 }
 

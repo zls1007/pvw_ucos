@@ -95,11 +95,11 @@ void usartDeal_task(void *p_arg)
 			}
 			continue;
 		}
-		
+		//printf("kk\r\n");
 		GetSysState(&mState);
 		if(mState == MODE_ERR_COM)  //如果此时系统处于通信中断状态，则系统恢复
 		{
-				mState = MODE_ERR_COM;   
+				mState = MODE_MOVE;   
 				SetSysState(&mState);			//系统恢复正常运动模式
 		}
 		

@@ -35,6 +35,8 @@ void led_task(void *p_arg)
 	p_arg = p_arg;
 	while(1)
 	{
+		
+		//printf("11\r\n");
 		LedLightCtr();  //改变灯光亮度
 		OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //延时100ms
 	}

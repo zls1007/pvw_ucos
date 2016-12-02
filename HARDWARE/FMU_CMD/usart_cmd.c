@@ -10,7 +10,7 @@ static CPU_INT08U RxDataCtr = 0;     	//接收计数
 static CPU_INT08U Rx_buf[100];				//暂存接收到的指令
 
 
-//初始化IO 串口2 
+//初始化IO 串口1
 //bound:波特率
 void usart_cmd_init(u32 bound)
 {
@@ -19,39 +19,39 @@ void usart_cmd_init(u32 bound)
 		NVIC_InitTypeDef  NVIC_InitStructure;
   
 		//打开时钟
-  	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE); 
-  	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+  	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); 
+  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
   	
 		//IO重映射
-		GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_USART2);  
-  	GPIO_PinAFConfig(GPIOD, GPIO_PinSource6, GPIO_AF_USART2);
+		GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_USART2);  
+  	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_USART2);
 	
 		//GPIO配置
-  	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6;
+  	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
   	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  	GPIO_Init(GPIOD, &GPIO_InitStructure);  
+  	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 
 		//中断优先级设置
 		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-		NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+		NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 6;
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);		
   	
-		//串口2配置
+		//串口1配置
 		USART_InitStructure.USART_BaudRate = bound;//波特率设置
   	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   	USART_InitStructure.USART_StopBits = USART_StopBits_1;
   	USART_InitStructure.USART_Parity = USART_Parity_No;
   	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx; 
-  	USART_Init(USART2, &USART_InitStructure);
-		USART_ITConfig(USART2, USART_IT_RXNE,ENABLE);   //接收完成中断
-  	USART_Cmd(USART2, ENABLE);
+  	USART_Init(USART1, &USART_InitStructure);
+		USART_ITConfig(USART1, USART_IT_RXNE,ENABLE);   //接收完成中断
+  	USART_Cmd(USART1, ENABLE);
 }
 
 
@@ -70,15 +70,15 @@ void os_print_str(USART_TypeDef* USARTx, char *str)
 }
 
 
-//串口2中断服务程序
-void USART2_IRQHandler(void)                	
+//串口1中断服务程序
+void USART1_IRQHandler(void)                	
 { 
 	u8 c;
 	OS_ERR err;
 	OSIntEnter();  
-  if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+  if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
-		c = USART_ReceiveData(USART2);
+		c = USART_ReceiveData(USART1);
 
 		//接收到开始帧，获取一个内存块
 		if(c == '{' && RxDataCtr == 0)
