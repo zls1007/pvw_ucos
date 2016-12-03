@@ -26,7 +26,7 @@
 #include "usart_cmd.h"
 #include "ms5611.h"
 #include "adc.h"
-//#include "mpu9250.h"
+#include "mpu9250.h"
 
 void bsp_init(void);
 

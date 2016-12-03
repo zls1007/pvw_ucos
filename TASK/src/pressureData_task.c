@@ -37,7 +37,7 @@ void pressureData_task(void *p_arg)
 	float pressure,temper; //腔体气压、芯片温度
 	
 	
-	MS5611_Config();						//气压计初始化
+	//MS5611_Config();						//气压计初始化
 
 	while(1)
 	{

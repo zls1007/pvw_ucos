@@ -59,7 +59,7 @@ void imuData_task(void *p_arg)
 	int offset_gyro[3] = {0, 0, 0};
 	int i;
 	CPU_SR_ALLOC();
-	MPU9250_Config();   //mpu9250 初始化
+	//MPU9250_Config();   //mpu9250 初始化
 	//计算陀螺仪的零点漂移
 	for(i=0; i<100; i++)
 	{

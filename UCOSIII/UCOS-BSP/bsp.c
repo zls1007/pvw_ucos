@@ -12,7 +12,7 @@ void bsp_init(void)
 	tim3_init();									//初始化pwm输出
 	//usart_io_init(115200);			//初始化IO板接口
 	usart_cmd_init(115200);			//初始化通信接口
-	MS5611_Config();						//气压计初始化
+	//MS5611_Config();						//气压计初始化
 	ADC3_Config();
 	//MPU9250_Config();   //mpu9250 初始化
 	

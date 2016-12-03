@@ -2,11 +2,18 @@
 #include "start_task.h"
 #include "system_param.h"
 #include "config_param.h"
+#include "bsp.h"
 
 
 int main(void)
 {
   OS_ERR err;
+	
+	//初始化MPU9250  MS5611
+	tim4_init();
+	delay_ms(20);
+	MPU9250_Config();   //mpu9250 初始化
+	MS5611_Config();						//气压计初始化
   
 	//硬件初始化
 	bsp_init();

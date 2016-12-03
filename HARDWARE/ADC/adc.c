@@ -1,12 +1,10 @@
 #include "adc.h"
 #include "includes.h"	
+//_IO
+extern uint16_t ADC_ConvertedValue[N][2];
 
-__IO uint16_t ADC_ConvertedValue[N][2];
-
-extern OS_TCB adcDealTaskTCB;				//任务控制块儿
-
-extern OS_MEM MyADCPartition;				//传递消息的存储块
-static CPU_INT08U* MyADCBlkPtr;			//存储块指针
+//任务控制块
+extern OS_TCB adcDealTaskTCB;
 
 #define ADC3_DR_Address ((u32)0x40012200+0x4c)
 
@@ -125,20 +123,11 @@ void DMA2_Stream0_IRQHandler(void)
 	if(DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0) != RESET)
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
-		printf("ad\r\n");
-//		//获取存储块
-//		MyADCBlkPtr = (CPU_INT08U* )OSMemGet(&MyADCPartition, &err);
-//		if(err == OS_ERR_NONE)
-//		{
-//			//复制数据	
-//			memcpy(MyADCBlkPtr, (const void *)ADC_ConvertedValue, N*2*2);
-//			//发送消息队列
-//			OSTaskQPost((OS_TCB* )&adcDealTaskTCB,
-//				(void *)MyADCBlkPtr,
-//				(OS_MSG_SIZE)N*2*2,
-//				(OS_OPT)OS_OPT_POST_FIFO,
-//				(OS_ERR* )&err);
-//		}
+//		printf("ad\r\n");
+		
+		//发布信号量
+		OSTaskSemPost(&adcDealTaskTCB, OS_OPT_POST_NONE, &err);
+
 	}
 }
 

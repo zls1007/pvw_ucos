@@ -8,6 +8,7 @@
 	*			硬件资源：	
 	*						TIM1  高级定时器   PWM输出模式   对无刷电调进行控制			
 	*						TIM3	通用定时器	 PWM输出模式	 对照明进行控制
+	*						TIM4	通用定时器	 用作计数器，系统启动前延时
   *
 	*			优先级: (1组)
 	*						TIM1  0/3   （非中断模式）
@@ -19,6 +20,7 @@
 */
 
 #include "tim.h"
+extern uint16_t tim4_cnt;
 
 /****************************************************************************
 *			TIM1 PWM输出模式（对无刷电调进行控制）
@@ -188,6 +190,57 @@ void tim3_init(void)
 		TIM_CtrlPWMOutputs(TIM3, ENABLE);  //使能TIM3的PWM输出
 }
 
+/****************************************************************************
+*			TIM3 PWM输出模式(对照明进行控制)
+*
+*			对84MHz（TIM3时钟源为84MHz）
+*					分频数 ———— 84  
+*					计数值 ———— 100  0.1ms
+******************************************************************************/
+void tim4_init(void)
+{	 
+		NVIC_InitTypeDef  NVIC_InitStructure;
+		TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+		
+		//打开时钟
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);  
+
+
+		//中断优先级设置
+		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+		NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 5;
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);		
+
+		//基本时基单元设置
+		TIM_DeInit(TIM3);  
+		TIM_TimeBaseStructure.TIM_Period = 100 - 1;
+		TIM_TimeBaseStructure.TIM_Prescaler = 84 - 1;
+		TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+		TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+		TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+		TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+
+		
+		//使能时钟
+		//TIM_Cmd(TIM4, ENABLE);		
+		TIM_Cmd(TIM4, DISABLE);
+
+}
+
+
+//中断函数
+void TIM4_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM4, TIM_FLAG_Update) != RESET)
+	{
+		TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+		tim4_cnt ++;
+	}
+}
 
 
 
