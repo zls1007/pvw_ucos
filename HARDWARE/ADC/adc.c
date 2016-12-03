@@ -6,6 +6,8 @@ extern uint16_t ADC_ConvertedValue[N][2];
 //任务控制块
 extern OS_TCB adcDealTaskTCB;
 
+extern OS_SEM MyADCSem;
+
 #define ADC3_DR_Address ((u32)0x40012200+0x4c)
 
 /**********************************************************************************
@@ -123,10 +125,11 @@ void DMA2_Stream0_IRQHandler(void)
 	if(DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0) != RESET)
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
-//		printf("ad\r\n");
 		
 		//发布信号量
+		//OSSemPost(&MyADCSem, OS_OPT_POST_NONE, &err);
 		OSTaskSemPost(&adcDealTaskTCB, OS_OPT_POST_NONE, &err);
+		//printf("ad\r\n");
 
 	}
 }

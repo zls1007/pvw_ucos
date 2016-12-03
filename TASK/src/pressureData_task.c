@@ -44,7 +44,7 @@ void pressureData_task(void *p_arg)
 		//读取温度和压力值
 		temper = MS5611_getTemperature(CMD_CONVERT_D2_OSR4096);
     pressure= MS5611_getPressure(CMD_CONVERT_D1_OSR4096);
-		//printf("pre=%.3f  tem=%.3f\r\n", pressure, temper);
+		printf("pre=%.3f  tem=%.3f\r\n", pressure, temper);
 		
 		//更新系统参数
 		SetPTData(&pressure, &temper);

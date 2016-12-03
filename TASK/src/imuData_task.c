@@ -86,7 +86,7 @@ void imuData_task(void *p_arg)
 		OSMutexPend(&MY_MUTEX,0,OS_OPT_PEND_BLOCKING,0,&err); 	//请求互斥信号量
 		//printf("imu:%d, %d, %d, %d, %d, %d\r\n",imu[1], imu[2], imu[3], imu[4], imu[5], imu[6]);
 		OSMutexPost (&MY_MUTEX,OS_OPT_POST_NONE,&err);					//发送互斥信号量
-		OSTimeDlyHMSM(0,0,0,200,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
+		OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
 	}
 }
 

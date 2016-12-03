@@ -28,6 +28,7 @@ float TEMP2,Aux,OFF2,SENS2;         //温度检验值
 	* PB15 -- MOSI
 	*	PB10 -- SCK
 	* PD7  -- CS		推挽输出
+	* PE10 -- 传感器供电使能
 	128MHz/256
 *******************************************************************************/
 void SPI2_Init(void)
@@ -37,6 +38,7 @@ void SPI2_Init(void)
 	
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);//使能GPIOB时钟
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);//使能GPIOD时钟
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);//使能GPIOD时钟
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); //使能SPI2时钟
 	
 	//PD7 推挽输出
@@ -46,6 +48,16 @@ void SPI2_Init(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;   //100MHz
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;         //上拉
   GPIO_Init(GPIOD, &GPIO_InitStructure);     					 //初始化
+	
+		//传感器供电使能配置
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;			//选定引脚
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;					//设置为普通输出
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;		//输出频率为100MHz
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;					//设置为上拉   GPIO_PuPd_NOPULL(不上拉)	
+	GPIO_Init(GPIOE,&GPIO_InitStructure);
+		//给传感器供电
+	GPIO_SetBits(GPIOE,GPIO_Pin_10);
  
 	//PB10 PB14 PB15复用功能输出
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_14 | GPIO_Pin_15;									 	
@@ -283,7 +295,9 @@ void MS5611_Config(void)
    SPI2_SetSpeed(SPI_BaudRatePrescaler_256);	   //设置SPI速率  128M/256=500KHZ
    MS5611_RESET();                                 //MS5611初始化
    MS5611_PROM_READ();                             //读取存储器(128-bit PROM)
+	 delay_ms(100);
 }
+
 /*end*/
 
 

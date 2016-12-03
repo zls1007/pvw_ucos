@@ -8,8 +8,8 @@ OS_TCB adcDealTaskTCB;
 //任务堆栈	
 CPU_STK ADC_DEAL_TASK_STK[ADC_DEAL_STK_SIZE];
 
-////创建一个信号量
-//OS_SEM MyADCSem;
+//创建一个信号量
+OS_SEM MyADCSem;
 
 //存储AD转换的结果
 uint16_t ADC_ConvertedValue[N][2];
@@ -20,11 +20,11 @@ void adcDeal_task_create(void)
 	CPU_SR_ALLOC();
 	OS_CRITICAL_ENTER();	//进入临界区
 	
-//	//创建信号量
-//	OSSemCreate(&MyADCSem,
-//							"my adc sem",
-//							1,
-//							&err);
+	//创建信号量
+	OSSemCreate(&MyADCSem,
+							"my adc sem",
+							0,
+							&err);
 	
 	//创建任务
 	OSTaskCreate((OS_TCB 	* )&adcDealTaskTCB,		
@@ -68,18 +68,21 @@ void filter()
 		{									   
 			temp = ADC_Value[count][i] * 3.3/0x0fff;
 			sum += temp;
+
 		}
 		ADC_Filter[i] = sum/140;
 		sum = 0;
 	}
 
+	//printf("adc=%.2f, %.2f\r\n", ADC_Filter[0], ADC_Filter[1]);
+	
 	deep = ADC_Filter[1] * 1000/165;	//转换成电流 mA
 	//deep = (deep - 4)*10;	 			//转换为深度值  16mA = 1.6Mpa   1Mpa = 100m
-	deep = (deep)*100/16;	 			//转换为深度值  16mA = 1Mpa   1Mpa = 100m
+	deep = (deep - 4)*100/16;	 			//转换为深度值  16mA = 1Mpa   1Mpa = 100m
 
 	vol =  ADC_Filter[0] * 4;			// *4
 
-
+	
 	//移动平均滤波
 	deep_filter[index++] = deep;
 	if(index == 5) index = 0;
@@ -89,11 +92,14 @@ void filter()
 		sum += deep_filter[i];	
 	}
 	deep = sum/5;
+	
+	deep += 0.6;
+	vol += 0.5;
 
 	//更新传感器参数
 	SetDeepData(&deep);
-	GetBatteryData(&vol, &cur);
-	printf("vol=%.2f, deep=%.2f\r\n", vol, deep);
+	SetBatteryData(&vol, &cur);
+	//printf("vol=%.2f, deep=%.2f\r\n", vol, deep);
 	
 	//检测是否欠压
 	if(vol < 10.7)
@@ -108,20 +114,19 @@ void filter()
 void adcDeal_task(void *p_arg)
 {
 	OS_ERR err;
-
-	uint16_t *delta;   	//存储块的指针
-	OS_MSG_SIZE size;			//存储块的长度
 	
 //CPU_TS ts;  ts = OSTimeGet(&err);
 	p_arg = p_arg;
 	
-	
 	while(1)
 	{
 		//等待信号量
+		//OSSemPend(&MyADCSem, 0, OS_OPT_PEND_BLOCKING, 0, &err);
 		OSTaskSemPend(0, OS_OPT_PEND_BLOCKING, 0, &err);
+		filter();
+		//printf("adc\r\n");
+
 		
-		filter((uint16_t(*)[2])delta);
 
 
 	}

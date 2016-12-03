@@ -5,7 +5,7 @@
 #include "includes.h"					//ucos สนำร	  
 #include "os_cfg_app.h"
 
-uint16_t tim4_cnt;
+__IO uint16_t tim4_cnt;
 
 void delay_init(void)
 {
@@ -36,7 +36,7 @@ void delay_ms(u32 nms)
 	tim4_cnt = 0;
 	TIM_Cmd(TIM4, ENABLE);	
 	nms *= 10;
-	while(tim4_cnt > nms);
+	while(tim4_cnt < nms);
 	TIM_Cmd(TIM4, DISABLE);
 }
 

@@ -399,7 +399,7 @@ void MPU9250_Config(void)
     while(1) 
 		{
       if(MPU9250_Init(&MPU_InitStruct) != SUCCESS) 
-				delay_ms(200);
+				delay_ms(2000);
 			else 
 				break;
     }

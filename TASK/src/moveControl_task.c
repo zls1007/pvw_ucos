@@ -45,6 +45,7 @@ void moveControl_task(void *p_arg)
 		if(mySysState != MODE_MOVE)    //如果系统不处于正常工作状态
 		{
 			MoterMoveStop();  //停止运动
+			OSTimeDlyHMSM(0,0,0,10,OS_OPT_TIME_HMSM_STRICT,&err); //延时10ms
 			continue;
 		}
 		

@@ -20,7 +20,8 @@
 */
 
 #include "tim.h"
-extern uint16_t tim4_cnt;
+#include "includes.h"	
+extern __IO uint16_t tim4_cnt;
 
 /****************************************************************************
 *			TIM1 PWM输出模式（对无刷电调进行控制）
@@ -191,9 +192,9 @@ void tim3_init(void)
 }
 
 /****************************************************************************
-*			TIM3 PWM输出模式(对照明进行控制)
+*			TIM4 计数器
 *
-*			对84MHz（TIM3时钟源为84MHz）
+*			对84MHz（TIM4时钟源为84MHz）
 *					分频数 ———— 84  
 *					计数值 ———— 100  0.1ms
 ******************************************************************************/
@@ -215,12 +216,12 @@ void tim4_init(void)
 		NVIC_Init(&NVIC_InitStructure);		
 
 		//基本时基单元设置
-		TIM_DeInit(TIM3);  
+		TIM_DeInit(TIM4);  
 		TIM_TimeBaseStructure.TIM_Period = 100 - 1;
 		TIM_TimeBaseStructure.TIM_Prescaler = 84 - 1;
 		TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-		TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+		TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 		TIM_ClearFlag(TIM4, TIM_FLAG_Update);
 		TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
 

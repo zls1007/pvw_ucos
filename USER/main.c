@@ -9,9 +9,11 @@ int main(void)
 {
   OS_ERR err;
 	
+	uart_init(115200);					//初始化串口
+	
 	//初始化MPU9250  MS5611
 	tim4_init();
-	delay_ms(20);
+	delay_ms(1000);
 	MPU9250_Config();   //mpu9250 初始化
 	MS5611_Config();						//气压计初始化
   

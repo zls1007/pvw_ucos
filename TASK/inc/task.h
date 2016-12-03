@@ -21,7 +21,7 @@
 #define IMU_DATA_STK_SIZE				512						//IMU数据采集任务
 #define PRESSURE_DATA_STK_SIZE	256						//气压计采集任务
 #define MOVE_CONTROL_STK_SIZE		256						//推进器控制任务
-#define ADC_DEAL_STK_SIZE				256						//adc采集数据处理任务
+#define ADC_DEAL_STK_SIZE				512						//adc采集数据处理任务
 
 //任务函数
 void start_task(void *p_arg);									//开始任务

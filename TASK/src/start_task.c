@@ -62,7 +62,6 @@ void start_task(void *p_arg)
 	
 	//创建IO板通信任务  6
 	//usartIO_task_create();
-	
 
 	
 	//创建气压计采集任务  8

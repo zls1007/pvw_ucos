@@ -20,6 +20,7 @@
 *			PA7 ---- MOSI	
 *			PC2 ---- CS 
 *			PD15 ---- DRDY 
+*			PE10 ---- 传感器供电使能
 *			256Mhz/256
 ******************************************************************************/
 void SPI1_Init(void)
@@ -31,7 +32,7 @@ void SPI1_Init(void)
   	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
   	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA ,ENABLE);
 		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC ,ENABLE);
-		//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD ,ENABLE);
+		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE ,ENABLE);
 	
 		//配置GPIO（复用）
 	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -51,6 +52,16 @@ void SPI1_Init(void)
   	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   	GPIO_Init(GPIOC, &GPIO_InitStructure);
   	GPIO_SetBits(GPIOC, GPIO_Pin_2);//不选中
+		
+		//传感器供电使能配置
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;			//选定引脚
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;					//设置为普通输出
+		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;		//输出频率为100MHz
+		GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;					//设置为上拉   GPIO_PuPd_NOPULL(不上拉)	
+		GPIO_Init(GPIOE,&GPIO_InitStructure);
+			//给传感器供电
+		GPIO_SetBits(GPIOE,GPIO_Pin_10);
 		
 		//SPI1配置
   	SPI_I2S_DeInit(SPI1);
