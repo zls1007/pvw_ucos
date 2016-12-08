@@ -426,6 +426,7 @@ void CmdFeedbackRunState(void)
 	GetBatteryData(&vol, &cur);
 	GetDeepData(&deep);
 	GetPTData(&press, &t);
+	GetAttitudeData(&r, &p, &y);
 
 	sprintf((char *)feedback_buf, "{\"T\":51,\"P\":0,\"L\":7,\"D\":[%d,%d,%d,%d,%d,%d,%d]}\r\n", (int)(vol*100),(int)(cur*100),(int)(deep*100),(int)(r*100),(int)(p*100),(int)(y*100),(int)(press));
 	//sprintf((char *)feedback_buf, "{\"T\":51,\"P\":0,\"L\":7,\"D\":[%d,%d,%d,%d]}\r\n",r,p,y,press);

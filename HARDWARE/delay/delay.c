@@ -25,11 +25,11 @@ void SysTick_Handler(void)
 		OSIntExit();       	 				//触发任务切换软中断
 }
 
-//void delay_ms(u32 nms)
-//{
-//	OS_ERR err;
-//	OSTimeDlyHMSM(0,0,0,nms,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
-//}
+void os_delay_ms(u32 nms)
+{
+	OS_ERR err;
+	OSTimeDlyHMSM(0,0,0,nms,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
+}
 
 void delay_ms(u32 nms)
 {

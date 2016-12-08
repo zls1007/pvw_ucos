@@ -27,6 +27,8 @@
 #include "ms5611.h"
 #include "adc.h"
 #include "mpu9250.h"
+#include "iic.h"
+#include "battery.h"
 
 void bsp_init(void);
 

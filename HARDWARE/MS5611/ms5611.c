@@ -224,7 +224,7 @@ float MS5611_getPressure(unsigned char OSR_Pres)
 	ATMOSPHERE_ENABLE;                                 //使能大气压强模块  
   temp = SPI2_ReadWriteByte(CMD_CONVERT_D1_OSR4096);
 	ATMOSPHERE_DISENABLE;                              //禁止大气压强模块
-	delay_ms(10);                                      //必须加
+	os_delay_ms(10);                                      //必须加
   D1_Pres=MS5611_SPI_read_ADC();
 
   OFF=(unsigned long)C2*65536+((unsigned long)C4*dT)/128;
@@ -260,7 +260,7 @@ float MS5611_getTemperature(unsigned char OSR_Temp)
 	ATMOSPHERE_ENABLE;                                  //使能大气压强模块  
   temp = SPI2_ReadWriteByte(CMD_CONVERT_D2_OSR4096);
 	ATMOSPHERE_DISENABLE;                               //禁止大气压强模块
-  delay_ms(10);                                       //此处延时必须加
+  os_delay_ms(10);                                       //此处延时必须加
   D2_Temp=MS5611_SPI_read_ADC();	
   dT=D2_Temp - (((unsigned long)C5)<<8);
   Temperature=2000+dT*((unsigned long)C6)/8388608;		//实际温度*0.01

@@ -98,15 +98,15 @@ void filter()
 
 	//更新传感器参数
 	SetDeepData(&deep);
-	SetBatteryData(&vol, &cur);
+	//SetBatteryData(&vol, &cur);
 	//printf("vol=%.2f, deep=%.2f\r\n", vol, deep);
 	
-	//检测是否欠压
-	if(vol < 10.7)
-	{
-		mState = MODE_ALARM_VOL;
-		SetSysState(&mState);
-	}
+//	//检测是否欠压
+//	if(vol < 10.7)
+//	{
+//		mState = MODE_ALARM_VOL;
+//		SetSysState(&mState);
+//	}
 		
 }
 

@@ -8,6 +8,7 @@ CPU_STK	IMU_DATA_TASK_STK[IMU_DATA_STK_SIZE];
 
 //姿态传感器接收到的数据
 int16_t imu[10] = {0};
+int16_t imu_t[10] = {0};  // 纠正之后的数据
 
 OS_MUTEX MY_MUTEX;   	//定义一个互斥型信号量，用于访问共享资源
 
@@ -80,11 +81,22 @@ void imuData_task(void *p_arg)
 		MPU9250_getData(imu);
 		//获取磁强计极值
 		//MagTop(imu[7], imu[8], imu[9]);
+		//根据北东地坐标系进行坐标纠正
+		imu_t[1] = imu[2];
+		imu_t[2] = imu[1];
+		imu_t[3] = imu[3];
+		imu_t[4] = -imu[5];
+		imu_t[5] = -imu[4];
+		imu_t[6] = -imu[6];
+		imu_t[7] = imu[7];
+		imu_t[8] = imu[8];
+		imu_t[9] = imu[9];
 		
 		//卡尔曼滤波输出
-		Kalman_Filter(imu, offset_gyro);
+		Kalman_Filter(imu_t, offset_gyro);
 		OSMutexPend(&MY_MUTEX,0,OS_OPT_PEND_BLOCKING,0,&err); 	//请求互斥信号量
 		//printf("imu:%d, %d, %d, %d, %d, %d\r\n",imu[1], imu[2], imu[3], imu[4], imu[5], imu[6]);
+		//printf("msg:%d, %d, %d\r\n", imu[7], imu[8], imu[9]);
 		OSMutexPost (&MY_MUTEX,OS_OPT_POST_NONE,&err);					//发送互斥信号量
 		OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
 	}

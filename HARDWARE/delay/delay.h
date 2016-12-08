@@ -5,6 +5,7 @@
 
 void delay_init(void);
 void delay_ms(u32 nms);
+void os_delay_ms(u32 nms);
 
 #endif
 

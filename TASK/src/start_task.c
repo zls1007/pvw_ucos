@@ -64,7 +64,7 @@ void start_task(void *p_arg)
 	//usartIO_task_create();
 
 	
-	//创建气压计采集任务  8
+	//创建气压计采集任务  11
 	pressureData_task_create();
 	
 	//创建推进器控制程序 9
@@ -73,8 +73,11 @@ void start_task(void *p_arg)
 	//创建ADC处理任务 10
 	adcDeal_task_create();
 	
-		//创建imu接收任务  7
+	//创建imu接收任务  7
 	imuData_task_create();	
+	
+	//创建电池接收任务 12
+	batteryData_task_create();
 						 
 	OS_TaskSuspend((OS_TCB*)&StartTaskTCB,&err);		//挂起开始任务			 
 }

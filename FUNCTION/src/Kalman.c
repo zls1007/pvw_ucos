@@ -178,7 +178,7 @@ void Kalman_Filter(int16_t imu[], int offset_gyro[])
 	
 	//计算加速度计的测量角
 	sum = sqrt(imu[2]*imu[2] + imu[3]*imu[3]);
-	sum = imu[1]/sum;
+	sum = -imu[1]/sum;
 	pitch_m = atan(sum);
 //	sum = sqrt(imu[1]*imu[1] + imu[3]*imu[3]);
 //	sum = imu[2]/sum;
@@ -200,10 +200,9 @@ void Kalman_Filter(int16_t imu[], int offset_gyro[])
 	Kalman_Filter_Roll(roll_m, gx);
 	Kalman_Filter_Pitch(pitch_m, gy);
 	Kalman_Filter_Yaw(yaw_m, gz);
-	//printf("pitch=%.2f\troll=%.2f\tyaw=%.2f\r\n", pitch, roll, yaw);
-	printf("roll=%.2f\tpitch=%.2f\tyaw=%.2f\r\n", roll, pitch, yaw);
+
+	//printf("roll=%.2f\tpitch=%.2f\tyaw=%.2f\r\n", roll, pitch, yaw);
 	
 	//更新系统姿态状态
-	//SetAttitudeState((s16)(roll*100), (s16)(pitch*100), (s16)(yaw*100));
 	SetAttitudeData(&roll, &pitch, &yaw);
 }
